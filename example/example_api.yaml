@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Example
+  description: An example
+  version: 1.0.0
+
+components:
+  schemas:
+    some_settings:
+      type: object
+      required:
+        - pos1
+        - pos2
+      properties:
+        mandatory1:
+          type: integer
+          format: int64
+          minimum: 0
+        mandatory2:
+          type: integer
+          format: int64
+          maximum: 100
+        optional1:
+          type: integer
+          format: int64
+          default: 123
+        optional2:
+          type: integer
+          format: int64
+          default: 456
+    error_message:
+      type: object
+      required:
+        - msg
+        - reason
+      properties:
+        msg:
+          type: string
+          description: "Human readable message"
+          example: "Fire!!!"
+        reason:
+          type: string
+          description: "Enumerate field for automated analysis"
+          enum:
+            - Error1
+            - Error2
+            - Other
+
+paths:
+  /something:
+    post:
+      summary: do something
+      description: |
+        do the important thing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/some_settings'
+      responses:
+        "200":
+          description: Everything OK
+        "400":
+          description: Input parsing or validation error
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Exception error
+        "500":
+          description: Error on our side (check msg) -- sorry!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_message'
+
